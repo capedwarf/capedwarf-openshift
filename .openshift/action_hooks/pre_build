@@ -1,0 +1,53 @@
+#!/bin/bash
+# This is a simple script and will be executed on your CI system if 
+# available.  Otherwise it will execute while your application is stopped
+# before the build step.  This script gets executed directly, so it
+# could be python, php, ruby, etc.
+
+git_repo="matejonnet/capedwarf-modules"
+
+cd_home=${OPENSHIFT_RUNTIME_DIR}capedwarf/
+cd_modules=${cd_home}capedwarf-modules/jboss-as7-modules/
+cd_update_script=${cd_home}update.sh
+cd_transformer=${cd_home}capedwarf-modules/transformer/
+cd_transformer_script=${cd_transformer}transform.sh
+
+local_version_file=${cd_home}local_version.ini
+
+if [ ! -d "${cd_home}" ]; then
+	mkdir ${cd_home}
+	echo "capedwarf_local_version=0" > ${local_version_file}
+fi
+
+source ${OPENSHIFT_RUNTIME_DIR}repo/.openshift/action_hooks/utils.sh
+
+#set capedwarf_local_version
+source /dev/stdin <<< "$(cat ${local_version_file})"
+
+
+load_tags
+num_of_tags=${#git_tags[@]}
+
+git_tag=${git_tags[${num_of_tags} - 1]}
+set_upstream_version
+
+is_up_to_date
+if [ ${is_up_to_date_r} == "false" ]; then
+	echo "Installing new CapeDwarf modules ..."
+	
+	for (( i=0; $i < $num_of_tags; i=$i+1 )); do
+		#skip first, it is already set
+		if [ $i > 0 ]; then
+			git_tag=${git_tags[${num_of_tags} - 1 - $i]}
+			set_upstream_version
+		fi 
+		
+		check_requirements
+		if [ ${check_requirements_r} == "true" ]; then
+			update_capedwarf
+			echo "capedwarf_local_version="${capedwarf_upstream_version} > ${local_version_file}
+			echo "CapeDwarf installed."
+			break
+		fi
+	done
+fi
