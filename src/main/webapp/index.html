@@ -146,6 +146,20 @@
 	You can also place your application war archive in myfirstapp/deployments folder and place a marker file myfirstapp/.openshift/markers/skip_maven_build to skip OpenShift builds. To deploy archive run git commands above.
   </p>
 
+<h2>Sample Application</h2>
+<p>To get started you can either modify the default sources or try this sample:
+  <ul>
+    <li><a href="https://github.com/capedwarf/todolist">https://github.com/capedwarf/todolist</a> this sample application uses AppEngine API to store documents.</li>
+  </ul>
+  
+  <h4>Example usage:</h4>
+  <pre>
+  cd todolist
+  git remote add upstream -m master git://github.com/capedwarf/todolist.git
+  git pull -s recursive -X theirs upstream master
+  </pre>
+</p>
+
 <h2>Debugging</h2>
 <p>View debugging information about the server environment including memory pools by loading this JSP page: <a href="snoop.jsp">Debug</a></p>
 
