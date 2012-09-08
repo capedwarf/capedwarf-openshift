@@ -4,7 +4,7 @@
 # before the build step.  This script gets executed directly, so it
 # could be python, php, ruby, etc.
 
-git_repo="capedwarf/capedwarf-modules"
+git_repo="openshift/capedwarf-example-modules"
 
 cd_home=${OPENSHIFT_RUNTIME_DIR}capedwarf/
 cd_modules=${cd_home}capedwarf-modules/jboss-as7-modules/
