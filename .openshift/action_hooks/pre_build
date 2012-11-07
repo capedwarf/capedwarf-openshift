@@ -4,9 +4,14 @@
 # before the build step.  This script gets executed directly, so it
 # could be python, php, ruby, etc.
 
-git_repo="openshift/capedwarf-example-modules"
+#git_repo="openshift/capedwarf-example-modules"
+git_repo_owner="matejonnet"
+git_repo_folder="capedwarf-modules"
 
-cd_home=${OPENSHIFT_RUNTIME_DIR}capedwarf/
+git_repo="${git_repo_owner}/${git_repo_folder}"
+
+runtime_dir=${OPENSHIFT_HOMEDIR}app-root/runtime/
+cd_home=${runtime_dir}capedwarf/
 cd_modules=${cd_home}capedwarf-modules/jboss-as7-modules/
 cd_update_script=${cd_home}update.sh
 cd_transformer=${cd_home}capedwarf-modules/transformer/
@@ -19,7 +24,7 @@ if [ ! -d "${cd_home}" ]; then
 	echo "capedwarf_local_version=0" > ${local_version_file}
 fi
 
-source ${OPENSHIFT_RUNTIME_DIR}repo/.openshift/action_hooks/utils.sh
+source ${runtime_dir}repo/.openshift/action_hooks/utils.sh
 
 #set capedwarf_local_version
 source /dev/stdin <<< "$(cat ${local_version_file})"

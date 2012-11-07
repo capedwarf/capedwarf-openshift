@@ -29,8 +29,7 @@ function update_capedwarf() {
 		rm -rf "${cd_home}capedwarf-modules"
 	fi
 
-	#TODO use variable for capedwarf-example-modules
-	downloaded_dir_name=$(ls ${cd_home} | grep capedwarf-example-modules)
+	downloaded_dir_name=$(ls ${cd_home} | grep ${git_repo_folder})
 	mv "${cd_home}${downloaded_dir_name}" "${cd_home}capedwarf-modules"
 
 	#transform
