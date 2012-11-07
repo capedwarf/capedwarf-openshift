@@ -254,7 +254,7 @@
                     <transaction mode="NONE"/>
                     <eviction strategy="NONE"/>
                 </replicated-cache>
-                <distributed-cache name="default" mode="ASYNC">
+                <replicated-cache name="default" mode="ASYNC">
                     <transaction mode="NON_XA"/>
                     <eviction strategy="NONE"/>
                     <file-store preload="true" purge="false"/>
@@ -272,13 +272,13 @@
                             jgroups
                         </property>
                     </indexing>
-                </distributed-cache>
+                </replicated-cache>
                 <distributed-cache name="dist" mode="ASYNC">
                     <transaction mode="NON_XA" locking="PESSIMISTIC"/>
                     <eviction strategy="NONE"/>
                     <file-store preload="true" purge="false"/>
                 </distributed-cache>
-                <distributed-cache name="tasks" mode="ASYNC">
+                <replicated-cache name="tasks" mode="ASYNC">
                     <transaction mode="NON_XA"/>
                     <eviction strategy="LIRS" max-entries="10000"/>
                     <file-store preload="true" purge="false"/>
@@ -296,8 +296,8 @@
                             jgroups
                         </property>
                     </indexing>
-                </distributed-cache>
-                <distributed-cache name="search" mode="ASYNC">
+                </replicated-cache>
+                <replicated-cache name="search" mode="ASYNC">
                     <transaction mode="NON_XA"/>
                     <eviction strategy="LIRS" max-entries="10000"/>
                     <file-store preload="true" purge="false"/>
@@ -315,8 +315,8 @@
                             jgroups
                         </property>
                     </indexing>
-                </distributed-cache>
-                <distributed-cache name="prospective_search" mode="ASYNC">
+                </replicated-cache>
+                <replicated-cache name="prospective_search" mode="ASYNC">
                     <transaction mode="NON_XA"/>
                     <eviction strategy="LIRS" max-entries="10000"/>
                     <file-store preload="true" purge="false"/>
@@ -334,7 +334,7 @@
                             jgroups
                         </property>
                     </indexing>
-                </distributed-cache>
+                </replicated-cache>
             </cache-container>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:jaxrs:1.0"/>

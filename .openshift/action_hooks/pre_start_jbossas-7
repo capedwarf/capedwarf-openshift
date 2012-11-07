@@ -14,3 +14,4 @@
 # throughout the system.
 
 export JBOSS_MODULEPATH_ADD=${OPENSHIFT_HOMEDIR}app-root/runtime/capedwarf/capedwarf-modules/jboss-as7-modules
+export JAVA_OPTS="${JAVA_OPTS} -Djboss.server.data.dir=${OPENSHIFT_DATA_DIR}"jboss-as7
