@@ -4,6 +4,9 @@
 # before the build step.  This script gets executed directly, so it
 # could be python, php, ruby, etc.
 
+source "/etc/openshift/node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+
 git_repo_owner="openshift"
 git_repo_folder="capedwarf-example-modules"
 
@@ -54,4 +57,29 @@ if [ ${is_up_to_date_r} == "false" ]; then
 			break
 		fi
 	done
+fi
+
+#set Admin password if it is not set yet
+if grep -q -e "^admin" ${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/standalone/configuration/application-users.properties; then
+	echo "Admin password already set."
+else
+	echo "Setting default admin password."
+	
+	password=$(random_pass_required_chars)
+	password=${password}$(generate_password)
+	
+	JBOSS_HOME_OLD=${JBOSS_HOME}
+	export JBOSS_HOME=${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/
+
+	${JAVA_HOME}/jre/bin/java \
+		-jar ${JBOSS_HOME}jboss-modules.jar \
+		-mp ${cd_modules} \
+		org.jboss.as.domain-add-user \
+		-a -s -u admin -p ${password} -ro admin
+
+	export JBOSS_HOME=${JBOSS_HOME_OLD}
+	#first character must be replaced because it is a special char
+	sed -i -e s/"<!--replace-with-pass-->"/"\\"${password}/g ${runtime_dir}/repo/src/main/webapp/index.html
+	
+	
 fi

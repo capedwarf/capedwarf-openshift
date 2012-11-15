@@ -45,3 +45,11 @@ function check_requirements() {
 		check_requirements_r="false"
 	fi
 }
+
+function random_pass_required_chars {
+    rnd_pass=$(head -n 50 /dev/urandom|tr -dc "$?+*@&"|fold -w 1 | head -n1)
+    rnd_pass=${rnd_pass}$(head -n 50 /dev/urandom|tr -dc "a-np-z"|fold -w 1 | head -n1)
+    rnd_pass=${rnd_pass}$(head -n 50 /dev/urandom|tr -dc "1-9"|fold -w 1 | head -n1)
+    rnd_pass=${rnd_pass}$(head -n 50 /dev/urandom|tr -dc "A-NP-Z"|fold -w 1 | head -n1)
+    printf "%s\n" "$rnd_pass"
+}
