@@ -63,7 +63,7 @@ fi
 if grep -q -e "^admin" ${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/standalone/configuration/application-users.properties; then
 	echo "Admin password already set."
 else
-	echo "Setting default admin password."
+	echo "Setting admin password."
 	
 	password=$(random_pass_required_chars)
 	password=${password}$(generate_password)
