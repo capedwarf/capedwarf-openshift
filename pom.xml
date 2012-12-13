@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>jbossas039</groupId>
-  <artifactId>jbossas039</artifactId>
+  <groupId>org.jboss.capedwarf</groupId>
+  <artifactId>openshift-template</artifactId>
   <packaging>war</packaging>
   <version>1.0</version>
-  <name>jbossas039</name>
+  <name>OpenShift template</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.6</maven.compiler.source>
@@ -28,7 +28,7 @@
      <!-- http://maven.apache.org/guides/mini/guide-building-for-different-environments.html -->
      <id>openshift</id>
      <build>
-        <finalName>jbossas039</finalName>
+        <finalName>OpenShift template</finalName>
         <plugins>
           <plugin>
             <artifactId>maven-war-plugin</artifactId>
