@@ -60,8 +60,15 @@ if [ ${is_up_to_date_r} == "false" ]; then
 fi
 
 #set Admin password if it is not set yet
+welcome_page_index=${runtime_dir}/repo/src/main/webapp/index.html 
+
 if grep -q -e "^admin" ${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/standalone/configuration/application-users.properties; then
 	echo "Admin password already set."
+
+	if [ -f $welcome_page_index ]; then
+		sed -i -e s/"\"<!--replace-with-pass-->\""/"which was shown here on a first deploy"/g ${welcome_page_index}
+	fi
+
 else
 	echo "Setting admin password."
 	
@@ -78,8 +85,10 @@ else
 		-a -s -u admin -p ${password} -ro admin
 
 	export JBOSS_HOME=${JBOSS_HOME_OLD}
-	#first character must be replaced because it is a special char
-	sed -i -e s/"<!--replace-with-pass-->"/"\\"${password}/g ${runtime_dir}/repo/src/main/webapp/index.html
 	
+	if [ -f $welcome_page_index ]; then
+		#first character must be escaped because it is a special char
+		sed -i -e s/"<!--replace-with-pass-->"/"\\"${password}/g ${welcome_page_index}
+	fi
 	
 fi
