@@ -14,4 +14,39 @@
 # throughout the system.
 
 export JBOSS_MODULEPATH_ADD=${OPENSHIFT_HOMEDIR}app-root/runtime/capedwarf/capedwarf-modules/jboss-as7-modules
-export JAVA_OPTS="${JAVA_OPTS} -Djboss.server.data.dir=${OPENSHIFT_DATA_DIR}"jboss-as7
+
+### re defrine JAVA_OPTS the same way as JBossAS cartride does, because there is no way to just add to JAVA_OPTS
+resource_limits_file=`readlink -f /etc/openshift/resource_limits.conf`
+if [ "$resource_limits_file" = "/etc/openshift/resource_limits.conf" ]; 
+then
+	source /etc/openshift/resource_limits.conf
+else
+	resource_limits_file_name=`basename $resource_limits_file`
+	node_profile=`echo ${resource_limits_file_name/*./}`
+fi
+
+case "$node_profile" in
+    micro)
+        memory_options="-client -Xmx100m -XX:MaxPermSize=100m -XX:+AggressiveOpts -Dorg.apache.tomcat.util.LOW_MEMORY=true"
+    ;;
+    small)
+        memory_options="-client -Xmx256m -XX:MaxPermSize=128m -XX:+AggressiveOpts -Dorg.apache.tomcat.util.LOW_MEMORY=true"
+    ;;
+    medium)
+        memory_options="-client -Xmx664m -XX:MaxPermSize=128m -XX:+AggressiveOpts -Dorg.apache.tomcat.util.LOW_MEMORY=true"
+    ;;
+    large)
+        memory_options="-Xmx1456m -XX:MaxPermSize=148m -XX:+AggressiveOpts"
+    ;;
+    exlarge)
+        memory_options="-Xmx2888m -XX:MaxPermSize=184m -XX:+AggressiveOpts"
+    ;;
+    jumbo)
+        memory_options="-Xmx5888m -XX:MaxPermSize=256m -XX:+AggressiveOpts"
+    ;;
+esac
+
+JAVA_OPTS="$memory_options -Dorg.jboss.resolver.warning=true -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djboss.node.name=${OPENSHIFT_GEAR_DNS} -Djgroups.bind_addr=${OPENSHIFT_INTERNAL_IP}"                                                                                                                                                
+
+JAVA_OPTS="${JAVA_OPTS} -Djboss.server.data.dir=${OPENSHIFT_DATA_DIR}"jboss-as7
+export JAVA_OPTS="${JAVA_OPTS} -Dorg.apache.tomcat.util.net.MAX_THREADS=20"
