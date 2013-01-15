@@ -231,12 +231,12 @@
                 <replicated-cache name="data" mode="ASYNC">
                     <transaction mode="NON_XA"/>
                     <eviction strategy="LIRS" max-entries="10000"/>
-                    <file-store preload="true" purge="false"/>
+                    <file-store preload="false" purge="false"/>
                 </replicated-cache>
                 <replicated-cache name="metadata" mode="ASYNC">
                     <transaction mode="NON_XA"/>
                     <eviction strategy="LIRS" max-entries="10000"/>
-                    <file-store preload="true" purge="false"/>
+                    <file-store preload="false" purge="false"/>
                 </replicated-cache>
                 <replicated-cache name="memcache" mode="ASYNC">
                     <transaction mode="NON_XA" locking="PESSIMISTIC"/>
@@ -245,12 +245,12 @@
                 <replicated-cache name="LuceneIndexesMetadata" mode="SYNC">
                     <transaction mode="NONE"/>
                     <eviction strategy="NONE"/>
-                    <file-store preload="true" purge="false"/>
+                    <file-store preload="false" purge="false"/>
                 </replicated-cache>
                 <replicated-cache name="LuceneIndexesData" mode="SYNC">
                     <transaction mode="NONE"/>
                     <eviction strategy="NONE"/>
-                    <file-store preload="true" purge="false"/>
+                    <file-store preload="false" purge="false"/>
                 </replicated-cache>
                 <replicated-cache name="LuceneIndexesLocking" mode="SYNC">
                     <transaction mode="NONE"/>
@@ -259,7 +259,7 @@
                 <replicated-cache name="default" mode="ASYNC">
                     <transaction mode="NON_XA"/>
                     <eviction strategy="LIRS" max-entries="100000"/>
-                    <file-store preload="true" purge="false"/>
+                    <file-store preload="false" purge="false"/>
                     <indexing index="LOCAL">
                         <property name="hibernate.search.default.exclusive_index_use">
                             false
@@ -278,12 +278,12 @@
                 <distributed-cache name="dist" mode="ASYNC">
                     <transaction mode="NON_XA" locking="PESSIMISTIC"/>
                     <eviction strategy="LIRS" max-entries="100000"/>
-                    <file-store preload="true" purge="false"/>
+                    <file-store preload="false" purge="false"/>
                 </distributed-cache>
                 <replicated-cache name="tasks" mode="ASYNC">
                     <transaction mode="NON_XA"/>
                     <eviction strategy="LIRS" max-entries="10000"/>
-                    <file-store preload="true" purge="false"/>
+                    <file-store preload="false" purge="false"/>
                     <indexing index="LOCAL">
                         <property name="hibernate.search.default.exclusive_index_use">
                             false
@@ -302,7 +302,7 @@
                 <replicated-cache name="search" mode="ASYNC">
                     <transaction mode="NON_XA"/>
                     <eviction strategy="LIRS" max-entries="10000"/>
-                    <file-store preload="true" purge="false"/>
+                    <file-store preload="false" purge="false"/>
                     <indexing index="LOCAL">
                         <property name="hibernate.search.default.exclusive_index_use">
                             false
@@ -321,7 +321,7 @@
                 <replicated-cache name="prospective_search" mode="ASYNC">
                     <transaction mode="NON_XA"/>
                     <eviction strategy="LIRS" max-entries="10000"/>
-                    <file-store preload="true" purge="false"/>
+                    <file-store preload="false" purge="false"/>
                     <indexing index="LOCAL">
                         <property name="hibernate.search.default.exclusive_index_use">
                             false
