@@ -40,3 +40,8 @@ Avoiding conflicts specify git options to prefer this repo content.
    Operation takes a while to complete, OpenShift node is pulling in CapeDwarf.
 
 1. Open your sample app in a web browser at MyGaeApp-\<your domain name\>.rhcloud.com, first time it takes about a minute to load all dependent modules.
+
+License
+-------
+
+This code is dedicated to the public domain to the maximum extent permitted by applicable law, pursuant to CC0 (http://creativecommons.org/publicdomain/zero/1.0/)
