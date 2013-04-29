@@ -38,7 +38,7 @@ function update_capedwarf() {
 }
 
 function check_requirements() {
-	if [ -d "${as_required}" ]; then
+    if [[ -d "${as_required}" || -f "${as_required}" ]]; then
 		check_requirements_r="true"
 	else
 		echo "Check requirements: missing required ${as_required}"		
