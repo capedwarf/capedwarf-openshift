@@ -21,7 +21,7 @@ function set_upstream_version() {
 }
 
 function update_capedwarf() {
-	curl -s -o ${cd_home}capedwarf-openshift.tar.gz -L https://github.com/${git_repo}/archive/${git_tag}
+	curl -s -o ${cd_home}capedwarf-openshift.tar.gz -L https://github.com/${git_repo}/archive/${git_tag}.tar.gz
 	
 	tar -C ${cd_home} -xzf ${cd_home}capedwarf-openshift.tar.gz
 	rm -f ${cd_home}capedwarf-openshift.tar.gz
