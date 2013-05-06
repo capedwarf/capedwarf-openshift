@@ -40,22 +40,30 @@ set_upstream_version
 
 is_up_to_date
 if [ ${is_up_to_date_r} == "false" ]; then
-	echo "Installing new CapeDwarf modules ..."
+	echo "Found new CapeDwarf modules ..."
 	
 	for (( i=0; $i < $num_of_tags; i=$i+1 )); do
 		#skip first, it is already set
 		if [ $i > 0 ]; then
 			git_tag=${git_tags[${num_of_tags} - 1 - $i]}
 			set_upstream_version
+
+			is_up_to_date
+			if [ ${is_up_to_date_r} == "true" ]; then
+				echo "Lattest compatible version installed."
+				break;
+			fi
 		fi 
 		
 		check_requirements
 		if [ ${check_requirements_r} == "true" ]; then
+			echo "Updating CapeDwarf modules ..."
 			update_capedwarf
 			echo "capedwarf_local_version="${capedwarf_upstream_version} > ${local_version_file}
 			echo "CapeDwarf installed."
 			break
 		fi
+
 	done
 fi
 
