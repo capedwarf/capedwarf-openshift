@@ -54,7 +54,7 @@ if [ ${is_up_to_date_r} == "false" ]; then
 	for (( i=0; $i < $num_of_tags; i=$i+1 )); do
 		echo "Trying tag i: ${i}" >> $debug_log
 		#skip first, it is already set
-		if [ $i > 0 ]; then
+		if [ $i -gt 0 ]; then
 			git_tag=${git_tags[${num_of_tags} - 1 - $i]}
 			echo "Git tag ${git_tag}" >> $debug_log
 			set_upstream_version
