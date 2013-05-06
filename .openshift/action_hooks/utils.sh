@@ -41,7 +41,7 @@ function check_requirements() {
     if [[ -d "${as_required}" || -f "${as_required}" ]]; then
 		check_requirements_r="true"
 	else
-		echo "Check requirements: missing required ${as_required}"		
+		echo "Check requirements: missing required ${as_required}" | tee -a $debug_log
 		check_requirements_r="false"
 	fi
 }
