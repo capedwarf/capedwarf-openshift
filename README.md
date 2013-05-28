@@ -17,11 +17,11 @@ If you'd like to install it manually, follow [these directions](#manual-installa
 
 1. Create JBoss AS applications:
 
-        rhc app create -t jbossas-7 -a MyGaeApp
+        rhc app create -t jbossas-7 -a mygaeapp
 
 1. Remove JBossAS default sample application
 
-        cd MyGaeApp
+        cd mygaeapp
         git rm -r src/main/webapp/*
         git commit -m"Sample app removed."
     
@@ -38,7 +38,7 @@ Avoiding conflicts specify git options to prefer this repo content.
         
    Operation takes a while to complete, OpenShift node is pulling in CapeDwarf.
 
-1. Open your sample app in a web browser at MyGaeApp-\<your domain name\>.rhcloud.com, first time it takes about a minute to load all dependent modules.
+1. Open your sample app in a web browser at mygaeapp-\<your domain name\>.rhcloud.com, first time it takes about a minute to load all dependent modules.
 
 License
 -------
