@@ -22,8 +22,7 @@ If you'd like to install it manually, follow [these directions](#manual-installa
 1. Remove JBossAS default sample application
 
         cd MyGaeApp
-        rm -r src/main/webapp/*
-        git add -A
+        git rm -r src/main/webapp/*
         git commit -m"Sample app removed."
     
 1. Use files from this github repo to add CapeDwarf modules to JBoss AS.  
