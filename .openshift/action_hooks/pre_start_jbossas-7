@@ -15,12 +15,11 @@
 
 if [ "${CARTRIDGE_VERSION_2}" = "2" ]; then
 	JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas/
+	export OPENSHIFT_JBOSSAS_MODULE_PATH=${OPENSHIFT_HOMEDIR}app-root/runtime/capedwarf/capedwarf-modules/jboss-as7-modules
 else 
 	JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/
+	export JBOSS_MODULEPATH_ADD=${OPENSHIFT_HOMEDIR}app-root/runtime/capedwarf/capedwarf-modules/jboss-as7-modules
 fi
-
-#export JBOSS_MODULEPATH_ADD=${OPENSHIFT_HOMEDIR}app-root/runtime/capedwarf/capedwarf-modules/jboss-as7-modules
-export OPENSHIFT_JBOSSAS_MODULE_PATH=${OPENSHIFT_HOMEDIR}app-root/runtime/capedwarf/capedwarf-modules/jboss-as7-modules
 
 ### re defrine JAVA_OPTS the same way as JBossAS cartride does, because there is no way to just add to JAVA_OPTS
 resource_limits_file=`readlink -f /etc/openshift/resource_limits.conf`
