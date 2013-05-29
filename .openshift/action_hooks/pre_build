@@ -26,11 +26,17 @@ if [ ! -d "${cd_home}" ]; then
 	echo "capedwarf_local_version=0" > ${local_version_file}
 fi
 
+if [ -d ${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/]
+	$JBOSS_HOME_CART=${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/
+else 
+	#cart V2
+	$JBOSS_HOME_CART=${OPENSHIFT_HOMEDIR}jbossas/
+fi
+
 debug_log=${cd_home}install.log
 date > $debug_log
 
 source ${runtime_dir}repo/.openshift/action_hooks/utils.sh
-
 echo "Sourced utils.sh" >> $debug_log
 
 #set capedwarf_local_version
@@ -82,7 +88,7 @@ fi
 #set Admin password if it is not set yet
 welcome_page_index=${runtime_dir}/repo/src/main/webapp/index.html 
 
-if grep -q -e "^admin" ${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/standalone/configuration/application-users.properties; then
+if grep -q -e "^admin" ${runtime_dir}repo/.openshift/config/application-users.properties; then
 	echo "Admin password already set." | tee -a $debug_log
 
 	if [ -f $welcome_page_index ]; then
@@ -96,7 +102,7 @@ else
 	password=${password}$(generate_password)
 	
 	JBOSS_HOME_OLD=${JBOSS_HOME}
-	export JBOSS_HOME=${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/
+	export JBOSS_HOME=${JBOSS_HOME_CART}
 
 	${JAVA_HOME}/jre/bin/java \
 		-jar ${JBOSS_HOME}jboss-modules.jar \
