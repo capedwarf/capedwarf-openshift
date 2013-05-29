@@ -29,10 +29,18 @@ date > $debug_log
 if [ "${CARTRIDGE_VERSION_2}" = "2" ]; then
 	JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas/
 	source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+	JBOSS_SERVER_CONFIG_USER_DIR=$OPENSHIFT_DATA_DIR
+	touch $JBOSS_SERVER_CONFIG_USER_DIR/application-users.properties
+	touch $JBOSS_SERVER_CONFIG_USER_DIR/application-roles.properties
+	touch $JBOSS_SERVER_CONFIG_USER_DIR/mgmt-users.properties
 else 
+	echo "Using cartridge v1 paths" >> $debug_log
 	JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/
 	source "/etc/openshift/node.conf"
 	source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+	
+	JBOSS_SERVER_CONFIG_USER_DIR=${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/standalone/configuration/
 fi
 echo "JBOSS_PATH:${JBOSS_PATH}" >> $debug_log
 
@@ -88,7 +96,7 @@ fi
 #set Admin password if it is not set yet
 welcome_page_index=${runtime_dir}/repo/src/main/webapp/index.html 
 
-if grep -q -e "^admin" ${JBOSS_PATH}/standalone/configuration/application-users.properties; then
+if grep -q -e "^admin" ${JBOSS_SERVER_CONFIG_USER_DIR}application-users.properties; then
 	echo "Admin password already set." | tee -a $debug_log
 
 	if [ -f $welcome_page_index ]; then
@@ -105,6 +113,7 @@ else
 	export JBOSS_HOME=${JBOSS_PATH}
 
 	${JAVA_HOME}/jre/bin/java \
+		-Djboss.server.config.user.dir=$JBOSS_SERVER_CONFIG_USER_DIR \
 		-jar ${JBOSS_HOME}jboss-modules.jar \
 		-mp ${cd_modules} \
 		org.jboss.as.domain-add-user \

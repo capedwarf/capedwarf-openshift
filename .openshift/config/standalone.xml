@@ -28,16 +28,16 @@
             <security-realm name="ManagementRealm">
                 <authentication>
                     <local default-user="$local"/>
-                    <properties path="mgmt-users.properties" relative-to="jboss.server.config.dir"/>
+                    <properties path="${jboss.server.security.config.dir}mgmt-users.properties" />
                 </authentication>
             </security-realm>
             <security-realm name="ApplicationRealm">
                 <authentication>
                     <local default-user="$local" allowed-users="*"/>
-                    <properties path="application-users.properties" relative-to="jboss.server.config.dir"/>
+                    <properties path="${jboss.server.security.config.dir}application-users.properties" />
                 </authentication>
                 <authorization>
-                    <properties path="application-roles.properties" relative-to="jboss.server.config.dir"/>
+                    <properties path="${jboss.server.security.config.dir}application-roles.properties" />
                 </authorization>
             </security-realm>
         </security-realms>
