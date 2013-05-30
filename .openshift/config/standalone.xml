@@ -378,7 +378,7 @@
                     <property name="bind_addr">${env.OPENSHIFT_JBOSSAS_IP}</property>
                 </transport>
                 <protocol type="TCPPING">
-                	<property name="timeout">3000</property>
+                	<property name="timeout">30000</property>
                 	<property name="initial_hosts">${env.OPENSHIFT_JBOSSAS_CLUSTER}</property>
                 	<property name="port_range">0</property>
                 	<property name="num_initial_members">1</property>
@@ -397,7 +397,7 @@
                 <protocol type="AUTH">
                         <property name="auth_class">org.jgroups.auth.MD5Token</property>
                         <property name="token_hash">SHA</property>
-                        <property name="auth_value">${env.OPENSHIFT_JBOSSAS_CLUSTER}</property>
+                        <property name="auth_value">${env.OPENSHIFT_APP_UUID}</property>
                 </protocol>
                 <!--protocol type="pbcast.STATE_TRANSFER"/>
                 <protocol type="pbcast.FLUSH"/-->
@@ -419,7 +419,7 @@
             <hornetq-server>
                 <jmx-management-enabled>true</jmx-management-enabled>
                 <clustered>true</clustered>
-                <cluster-password>abc123</cluster-password>
+                <cluster-password>${env.OPENSHIFT_APP_UUID}</cluster-password>
                 <persistence-enabled>false</persistence-enabled>
                 <journal-file-size>102400</journal-file-size>
                 <journal-min-files>2</journal-min-files>
