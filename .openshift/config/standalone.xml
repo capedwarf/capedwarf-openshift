@@ -375,7 +375,7 @@
                 	<property name="external_addr">${env.OPENSHIFT_GEAR_DNS}</property>
                     <property name="external_port">${env.OPENSHIFT_JBOSSAS_CLUSTER_PROXY_PORT}</property>
                     <property name="bind_port">7600</property>
-                    <property name="bind_addr">${env.OPENSHIFT_INTERNAL_IP}</property>
+                    <property name="bind_addr">${env.OPENSHIFT_JBOSSAS_IP}</property>
                 </transport>
                 <protocol type="TCPPING">
                 	<property name="timeout">3000</property>
@@ -564,13 +564,13 @@
     </profile>
     <interfaces>
         <interface name="management">
-            <loopback-address value="${env.OPENSHIFT_INTERNAL_IP}"/>
+            <loopback-address value="${env.OPENSHIFT_JBOSSAS_IP}"/>
         </interface>
         <interface name="public">
-            <loopback-address value="${env.OPENSHIFT_INTERNAL_IP}"/>
+            <loopback-address value="${env.OPENSHIFT_JBOSSAS_IP}"/>
         </interface>
         <interface name="unsecure">
-            <loopback-address value="${env.OPENSHIFT_INTERNAL_IP}"/>
+            <loopback-address value="${env.OPENSHIFT_JBOSSAS_IP}"/>
         </interface>
     </interfaces>
     <socket-binding-group name="standard-sockets" default-interface="public" port-offset="0">

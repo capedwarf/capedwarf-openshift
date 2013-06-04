@@ -26,22 +26,14 @@ fi
 debug_log=${cd_home}install.log
 date > $debug_log
 
-if [ "${CARTRIDGE_VERSION_2}" = "2" ]; then
-	JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas/
-	source $OPENSHIFT_CARTRIDGE_SDK_BASH
+JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas/
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-	JBOSS_SERVER_CONFIG_USER_DIR=$OPENSHIFT_DATA_DIR
-	touch $JBOSS_SERVER_CONFIG_USER_DIR/application-users.properties
-	touch $JBOSS_SERVER_CONFIG_USER_DIR/application-roles.properties
-	touch $JBOSS_SERVER_CONFIG_USER_DIR/mgmt-users.properties
-else 
-	echo "Using cartridge v1 paths" >> $debug_log
-	JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/
-	source "/etc/openshift/node.conf"
-	source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
-	
-	JBOSS_SERVER_CONFIG_USER_DIR=${OPENSHIFT_HOMEDIR}jbossas-7/jbossas-7/standalone/configuration/
-fi
+JBOSS_SERVER_CONFIG_USER_DIR=$OPENSHIFT_DATA_DIR
+touch $JBOSS_SERVER_CONFIG_USER_DIR/application-users.properties
+touch $JBOSS_SERVER_CONFIG_USER_DIR/application-roles.properties
+touch $JBOSS_SERVER_CONFIG_USER_DIR/mgmt-users.properties
+
 echo "JBOSS_PATH:${JBOSS_PATH}" >> $debug_log
 
 source ${runtime_dir}repo/.openshift/action_hooks/utils.sh
