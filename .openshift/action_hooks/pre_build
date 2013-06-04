@@ -12,11 +12,12 @@ git_repo="${git_repo_owner}/${git_repo_folder}"
 runtime_dir=${OPENSHIFT_HOMEDIR}app-root/runtime/
 cd_home=${runtime_dir}capedwarf/
 cd_modules=${cd_home}capedwarf-modules/jboss-as7-modules/
-cd_update_script=${cd_home}update.sh
-cd_transformer=${cd_home}capedwarf-modules/transformer/
-cd_transformer_script=${cd_transformer}transform.sh
 
-local_version_file=${cd_home}local_version.ini
+REPO_DIR=${runtime_dir}repo/
+REPO_DIR_SHARED_DATA=${runtime_dir}repo/share/
+if [ ! -d "${REPO_DIR_SHARED_DATA}" ]; then
+	mkdir ${REPO_DIR_SHARED_DATA}
+fi
 
 if [ ! -d "${cd_home}" ]; then
 	mkdir ${cd_home}
@@ -26,73 +27,29 @@ fi
 debug_log=${cd_home}install.log
 date > $debug_log
 
-JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas/
-source $OPENSHIFT_CARTRIDGE_SDK_BASH
-
-JBOSS_SERVER_CONFIG_USER_DIR=$OPENSHIFT_DATA_DIR
-touch $JBOSS_SERVER_CONFIG_USER_DIR/application-users.properties
-touch $JBOSS_SERVER_CONFIG_USER_DIR/application-roles.properties
-touch $JBOSS_SERVER_CONFIG_USER_DIR/mgmt-users.properties
-
-echo "JBOSS_PATH:${JBOSS_PATH}" >> $debug_log
-
 source ${runtime_dir}repo/.openshift/action_hooks/utils.sh
 echo "Sourced utils.sh" >> $debug_log
 
-#set capedwarf_local_version
-source /dev/stdin <<< "$(cat ${local_version_file})"
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-echo "Sourced local_version_file" >> $debug_log
-echo "capedwarf_local_version: ${capedwarf_local_version}" >> $debug_log
+JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas/
+export OPENSHIFT_JBOSSAS_MODULE_PATH=${OPENSHIFT_HOMEDIR}app-root/runtime/capedwarf/capedwarf-modules/jboss-as7-modules
 
-load_tags
-num_of_tags=${#git_tags[@]}
-
-git_tag=${git_tags[${num_of_tags} - 1]}
-set_upstream_version
-echo "Git tag ${git_tag}; capedwarf_upstream_version: ${capedwarf_upstream_version}; as_required: ${as_required}" >> $debug_log
-
-is_up_to_date
-if [ ${is_up_to_date_r} == "false" ]; then
-	echo "Found new CapeDwarf modules ..." | tee -a $debug_log
-	
-	echo "num_of_tags: ${num_of_tags}" >> $debug_log
-	for (( i=0; $i < $num_of_tags; i=$i+1 )); do
-		echo "Trying tag i: ${i}" >> $debug_log
-		#skip first, it is already set
-		if [ $i -gt 0 ]; then
-			git_tag=${git_tags[${num_of_tags} - 1 - $i]}
-			echo "Git tag ${git_tag}" >> $debug_log
-			set_upstream_version
-			echo "capedwarf_upstream_version: ${capedwarf_upstream_version}; as_required: ${as_required}" >> $debug_log
-			
-			is_up_to_date
-			if [ ${is_up_to_date_r} == "true" ]; then
-				echo "Latest compatible version already installed." | tee -a $debug_log
-				break;
-			fi
-		fi 
-		
-		check_requirements
-		if [ ${check_requirements_r} == "true" ]; then
-			echo "Updating CapeDwarf modules ..." | tee -a $debug_log
-			update_capedwarf
-			echo "capedwarf_local_version="${capedwarf_upstream_version} > ${local_version_file}
-			echo "CapeDwarf installed." | tee -a $debug_log
-			break
-		fi
-
-	done
-fi
+touch ${REPO_DIR_SHARED_DATA}application-users.properties
+touch ${REPO_DIR_SHARED_DATA}application-roles.properties
+touch ${REPO_DIR_SHARED_DATA}mgmt-users.properties
 
 #set Admin password if it is not set yet
-welcome_page_index=${runtime_dir}/repo/src/main/webapp/index.html 
+welcome_page_index=${runtime_dir}repo/src/main/webapp/index.html 
 
-if grep -q -e "^admin" ${JBOSS_SERVER_CONFIG_USER_DIR}application-users.properties; then
+if grep -q -e "^admin" ${OPENSHIFT_DATA_DIR}application-users.properties; then
 	echo "Admin password already set." | tee -a $debug_log
 
 	if [ -f $welcome_page_index ]; then
+		echo "Updating welcome page ${welcome_page_index}" >> $debug_log
 		sed -i -e s/"\"<!--replace-with-pass-->\""/"which was shown here on a first deploy"/g ${welcome_page_index}
+	else
+		echo "Welcome page ${welcome_page_index} not found." >> $debug_log
 	fi
 
 else
@@ -105,16 +62,17 @@ else
 	export JBOSS_HOME=${JBOSS_PATH}
 
 	${JAVA_HOME}/jre/bin/java \
-		-Djboss.server.config.user.dir=$JBOSS_SERVER_CONFIG_USER_DIR \
+		-Djboss.server.config.user.dir=$REPO_DIR_SHARED_DATA \
 		-jar ${JBOSS_HOME}jboss-modules.jar \
 		-mp ${cd_modules} \
 		org.jboss.as.domain-add-user \
-		-a -s -u admin -p ${password} -ro admin
+		-a -s -u admin -p ${password} -ro admin >> $debug_log
 
 	export JBOSS_HOME=${JBOSS_HOME_OLD}
 	
 	if [ -f $welcome_page_index ]; then
 		#first character must be escaped because it is a special char
+		echo "Updating welcome page ${welcome_page_index}" >> $debug_log
 		sed -i -e s/"<!--replace-with-pass-->"/"\\"${password}/g ${welcome_page_index}
 	fi
 	
