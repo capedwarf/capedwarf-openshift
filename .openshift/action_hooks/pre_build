@@ -4,24 +4,16 @@
 # before the build step.  This script gets executed directly, so it
 # could be python, php, ruby, etc.
 
-git_repo_owner="openshift"
-git_repo_folder="capedwarf-example-modules"
-
-git_repo="${git_repo_owner}/${git_repo_folder}"
-
 runtime_dir=${OPENSHIFT_HOMEDIR}app-root/runtime/
 cd_home=${runtime_dir}capedwarf/
 cd_modules=${cd_home}capedwarf-modules/jboss-as7-modules/
 
-REPO_DIR=${runtime_dir}repo/
 REPO_DIR_SHARED_DATA=${runtime_dir}repo/share/
 if [ ! -d "${REPO_DIR_SHARED_DATA}" ]; then
 	mkdir ${REPO_DIR_SHARED_DATA}
-fi
-
-if [ ! -d "${cd_home}" ]; then
-	mkdir ${cd_home}
-	echo "capedwarf_local_version=0" > ${local_version_file}
+	touch ${REPO_DIR_SHARED_DATA}application-users.properties
+	touch ${REPO_DIR_SHARED_DATA}application-roles.properties
+	touch ${REPO_DIR_SHARED_DATA}mgmt-users.properties
 fi
 
 debug_log=${cd_home}install.log
@@ -34,10 +26,6 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas/
 export OPENSHIFT_JBOSSAS_MODULE_PATH=${OPENSHIFT_HOMEDIR}app-root/runtime/capedwarf/capedwarf-modules/jboss-as7-modules
-
-touch ${REPO_DIR_SHARED_DATA}application-users.properties
-touch ${REPO_DIR_SHARED_DATA}application-roles.properties
-touch ${REPO_DIR_SHARED_DATA}mgmt-users.properties
 
 #set Admin password if it is not set yet
 welcome_page_index=${runtime_dir}repo/src/main/webapp/index.html 

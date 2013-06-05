@@ -26,7 +26,6 @@ cd_transformer_script=${cd_transformer}transform.sh
 
 local_version_file=${cd_home}local_version.ini
 
-REPO_DIR=${runtime_dir}repo/
 REPO_DIR_SHARED_DATA=${runtime_dir}repo/share/
 
 #chack again pre_build is executed only on a master gear
