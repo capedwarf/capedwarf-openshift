@@ -18,40 +18,39 @@ git_repo_folder="capedwarf-modules"
 
 git_repo="${git_repo_owner}/${git_repo_folder}"
 
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
 runtime_dir=${OPENSHIFT_HOMEDIR}app-root/runtime/
 cd_home=${runtime_dir}capedwarf/
+if [ ! -d "${cd_home}" ]; then
+	mkdir ${cd_home}
+fi
+debug_log=${cd_home}install.log
+date > $debug_log
+
 cd_modules=${cd_home}capedwarf-modules/jboss-as7-modules/
 cd_update_script=${cd_home}update.sh
 cd_transformer=${cd_home}capedwarf-modules/transformer/
 cd_transformer_script=${cd_transformer}transform.sh
 
 local_version_file=${cd_home}local_version.ini
-
-REPO_DIR_SHARED_DATA=${runtime_dir}repo/share/
-
-#chack again pre_build is executed only on a master gear
-if [ ! -d "${cd_home}" ]; then
-	mkdir ${cd_home}
-fi
-
 if [ ! -f "${local_version_file}" ]; then
 	echo "capedwarf_local_version=0" > ${local_version_file}
 fi
 
-
-debug_log=${cd_home}install.log
-date >> $debug_log
-
-source $OPENSHIFT_CARTRIDGE_SDK_BASH
+REPO_DIR_SHARED_DATA=${runtime_dir}repo/share/
+if [ ! -d "${REPO_DIR_SHARED_DATA}" ]; then
+	mkdir ${REPO_DIR_SHARED_DATA}
+	touch ${REPO_DIR_SHARED_DATA}application-users.properties
+	touch ${REPO_DIR_SHARED_DATA}application-roles.properties
+	touch ${REPO_DIR_SHARED_DATA}mgmt-users.properties
+fi
 
 JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas/
 echo "JBOSS_PATH:${JBOSS_PATH}" >> $debug_log
 export OPENSHIFT_JBOSSAS_MODULE_PATH=${OPENSHIFT_HOMEDIR}app-root/runtime/capedwarf/capedwarf-modules/jboss-as7-modules
 
 JBOSS_SERVER_CONFIG_USER_DIR=$OPENSHIFT_DATA_DIR
-touch $JBOSS_SERVER_CONFIG_USER_DIR/application-users.properties
-touch $JBOSS_SERVER_CONFIG_USER_DIR/application-roles.properties
-touch $JBOSS_SERVER_CONFIG_USER_DIR/mgmt-users.properties
 
 source ${runtime_dir}repo/.openshift/action_hooks/utils.sh
 echo "Sourced utils.sh" >> $debug_log
@@ -100,6 +99,45 @@ if [ ${is_up_to_date_r} == "false" ]; then
 		fi
 
 	done
+fi
+
+#set Admin password if it is not set yet
+welcome_page_index=${runtime_dir}repo/src/main/webapp/index.html 
+
+if grep -q -e "^admin" ${REPO_DIR_SHARED_DATA}application-users.properties; then
+	echo "Admin password already set." | tee -a $debug_log
+
+	if [ -f $welcome_page_index ]; then
+		echo "Updating welcome page ${welcome_page_index}" >> $debug_log
+		sed -i -e s/"\"<!--replace-with-pass-->\""/"which was shown here on a first deploy"/g ${welcome_page_index}
+	else
+		echo "Welcome page ${welcome_page_index} not found." >> $debug_log
+	fi
+
+else
+	echo "Setting admin password." | tee -a $debug_log
+	
+	password=$(random_pass_required_chars)
+	password=${password}$(generate_password)
+	
+	JBOSS_HOME_OLD=${JBOSS_HOME}
+	export JBOSS_HOME=${JBOSS_PATH}
+
+	${JAVA_HOME}/jre/bin/java \
+		-Djboss.server.config.user.dir=$REPO_DIR_SHARED_DATA \
+		-jar ${JBOSS_HOME}jboss-modules.jar \
+		-mp ${cd_modules} \
+		org.jboss.as.domain-add-user \
+		-a -s -u admin -p ${password} -ro admin >> $debug_log
+
+	export JBOSS_HOME=${JBOSS_HOME_OLD}
+	
+	if [ -f $welcome_page_index ]; then
+		#first character must be escaped because it is a special char
+		echo "Updating welcome page ${welcome_page_index}" >> $debug_log
+		sed -i -e s/"<!--replace-with-pass-->"/"\\"${password}/g ${welcome_page_index}
+	fi
+	
 fi
 
 #copy user files from repo/share to data
