@@ -44,7 +44,6 @@ date >> $debug_log
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-
 JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas/
 echo "JBOSS_PATH:${JBOSS_PATH}" >> $debug_log
 export OPENSHIFT_JBOSSAS_MODULE_PATH=${OPENSHIFT_HOMEDIR}app-root/runtime/capedwarf/capedwarf-modules/jboss-as7-modules
