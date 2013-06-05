@@ -20,6 +20,7 @@ git_repo="${git_repo_owner}/${git_repo_folder}"
 
 runtime_dir=${OPENSHIFT_HOMEDIR}app-root/runtime/
 cd_home=${runtime_dir}capedwarf/
+cd_modules=${cd_home}capedwarf-modules/jboss-as7-modules/
 cd_update_script=${cd_home}update.sh
 cd_transformer=${cd_home}capedwarf-modules/transformer/
 cd_transformer_script=${cd_transformer}transform.sh
