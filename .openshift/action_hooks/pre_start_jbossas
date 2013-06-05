@@ -29,7 +29,6 @@ debug_log=${cd_home}install.log
 date > $debug_log
 
 cd_modules=${cd_home}capedwarf-modules/jboss-as7-modules/
-cd_update_script=${cd_home}update.sh
 cd_transformer=${cd_home}capedwarf-modules/transformer/
 cd_transformer_script=${cd_transformer}transform.sh
 
