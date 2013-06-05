@@ -8,6 +8,12 @@ runtime_dir=${OPENSHIFT_HOMEDIR}app-root/runtime/
 cd_home=${runtime_dir}capedwarf/
 cd_modules=${cd_home}capedwarf-modules/jboss-as7-modules/
 
+if [ ! -d "${cd_home}" ]; then
+	mkdir ${cd_home}
+fi
+debug_log=${cd_home}install.log
+date > $debug_log
+
 REPO_DIR_SHARED_DATA=${runtime_dir}repo/share/
 if [ ! -d "${REPO_DIR_SHARED_DATA}" ]; then
 	mkdir ${REPO_DIR_SHARED_DATA}
@@ -15,9 +21,6 @@ if [ ! -d "${REPO_DIR_SHARED_DATA}" ]; then
 	touch ${REPO_DIR_SHARED_DATA}application-roles.properties
 	touch ${REPO_DIR_SHARED_DATA}mgmt-users.properties
 fi
-
-debug_log=${cd_home}install.log
-date > $debug_log
 
 source ${runtime_dir}repo/.openshift/action_hooks/utils.sh
 echo "Sourced utils.sh" >> $debug_log
