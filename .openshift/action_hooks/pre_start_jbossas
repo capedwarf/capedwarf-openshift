@@ -37,19 +37,7 @@ if [ ! -f "${local_version_file}" ]; then
 	echo "capedwarf_local_version=0" > ${local_version_file}
 fi
 
-REPO_DIR_SHARED_DATA=${runtime_dir}repo/share/
-if [ ! -d "${REPO_DIR_SHARED_DATA}" ]; then
-	mkdir ${REPO_DIR_SHARED_DATA}
-	touch ${REPO_DIR_SHARED_DATA}application-users.properties
-	touch ${REPO_DIR_SHARED_DATA}application-roles.properties
-	touch ${REPO_DIR_SHARED_DATA}mgmt-users.properties
-fi
-
-JBOSS_PATH=${OPENSHIFT_HOMEDIR}jbossas/
-echo "JBOSS_PATH:${JBOSS_PATH}" >> $debug_log
 export OPENSHIFT_JBOSSAS_MODULE_PATH=${OPENSHIFT_HOMEDIR}app-root/runtime/capedwarf/capedwarf-modules/jboss-as7-modules
-
-JBOSS_SERVER_CONFIG_USER_DIR=$OPENSHIFT_DATA_DIR
 
 source ${runtime_dir}repo/.openshift/action_hooks/utils.sh
 echo "Sourced utils.sh" >> $debug_log
@@ -100,49 +88,6 @@ if [ ${is_up_to_date_r} == "false" ]; then
 	done
 fi
 
-#set Admin password if it is not set yet
-welcome_page_index=${runtime_dir}repo/src/main/webapp/index.html 
-
-if grep -q -e "^admin" ${REPO_DIR_SHARED_DATA}application-users.properties; then
-	echo "Admin password already set." | tee -a $debug_log
-
-	if [ -f $welcome_page_index ]; then
-		echo "Updating welcome page ${welcome_page_index}" >> $debug_log
-		sed -i -e s/"\"<!--replace-with-pass-->\""/"which was shown here on a first deploy"/g ${welcome_page_index}
-	else
-		echo "Welcome page ${welcome_page_index} not found." >> $debug_log
-	fi
-
-else
-	echo "Setting admin password." | tee -a $debug_log
-	
-	password=$(random_pass_required_chars)
-	password=${password}$(generate_password)
-	
-	JBOSS_HOME_OLD=${JBOSS_HOME}
-	export JBOSS_HOME=${JBOSS_PATH}
-
-	${JAVA_HOME}/jre/bin/java \
-		-Djboss.server.config.user.dir=$REPO_DIR_SHARED_DATA \
-		-jar ${JBOSS_HOME}jboss-modules.jar \
-		-mp ${cd_modules} \
-		org.jboss.as.domain-add-user \
-		-a -s -u admin -p ${password} -ro admin >> $debug_log
-
-	export JBOSS_HOME=${JBOSS_HOME_OLD}
-	
-	if [ -f $welcome_page_index ]; then
-		#first character must be escaped because it is a special char
-		echo "Updating welcome page ${welcome_page_index}" >> $debug_log
-		sed -i -e s/"<!--replace-with-pass-->"/"\\"${password}/g ${welcome_page_index}
-	fi
-	
-fi
-
-#copy user files from repo/share to data
-echo "Copying shared files to data:" >> $debug_log
-cp -r -v ${REPO_DIR_SHARED_DATA}* $OPENSHIFT_DATA_DIR >> $debug_log
-
 echo "Defining java opts..." >> $debug_log
 ### re defrine JAVA_OPTS the same way as JBossAS cartride does, because there is no way to just add to JAVA_OPTS
 resource_limits_file=`readlink -f /etc/openshift/resource_limits.conf`
@@ -178,4 +123,5 @@ esac
 JAVA_OPTS="$memory_options -Dorg.jboss.resolver.warning=true -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djboss.node.name=${OPENSHIFT_GEAR_DNS} -Djgroups.bind_addr=${OPENSHIFT_JBOSSAS_IP}"
 
 JAVA_OPTS="${JAVA_OPTS} -Djboss.server.data.dir=${OPENSHIFT_DATA_DIR}"jboss-as7
-export JAVA_OPTS="${JAVA_OPTS} -Dorg.apache.tomcat.util.net.MAX_THREADS=20 -Djboss.server.security.config.dir=${JBOSS_SERVER_CONFIG_USER_DIR}"
+JAVA_OPTS="${JAVA_OPTS} -Dcom.google.appengine.runtime.environment=Production"
+export JAVA_OPTS="${JAVA_OPTS} -Dorg.apache.tomcat.util.net.MAX_THREADS=20"

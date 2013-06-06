@@ -24,23 +24,6 @@
         <extension module="org.jboss.as.weld"/>
     </extensions>
     <management>
-        <security-realms>
-            <security-realm name="ManagementRealm">
-                <authentication>
-                    <local default-user="$local"/>
-                    <properties path="${jboss.server.security.config.dir}mgmt-users.properties" />
-                </authentication>
-            </security-realm>
-            <security-realm name="ApplicationRealm">
-                <authentication>
-                    <local default-user="$local" allowed-users="*"/>
-                    <properties path="${jboss.server.security.config.dir}application-users.properties" />
-                </authentication>
-                <authorization>
-                    <properties path="${jboss.server.security.config.dir}application-roles.properties" />
-                </authorization>
-            </security-realm>
-        </security-realms>
         <management-interfaces>
             <native-interface security-realm="ManagementRealm">
                 <socket-binding native="management-native"/>
