@@ -13,8 +13,8 @@
 # Application start and stop is subject to different timeouts
 # throughout the system.
 
-git_repo_owner="matejonnet"
-git_repo_folder="capedwarf-modules"
+git_repo_owner="openshift"
+git_repo_folder="capedwarf-example-modules"
 
 git_repo="${git_repo_owner}/${git_repo_folder}"
 
