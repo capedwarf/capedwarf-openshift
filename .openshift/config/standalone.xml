@@ -73,8 +73,8 @@
             </root-logger>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:capedwarf:1.0">
-			<!-- Put TransportGuaranteeType here: NONE, INTEGRAL, CONFIDENTIAL -->
-            <admin-auth>NONE</admin-auth>
+			<!-- Put TransportGuaranteeType here: NONE, INTEGRAL, CONFIDENTIAL, CAPEDWARF -->
+            <admin-auth>CAPEDWARF</admin-auth>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:datasources:1.1">
             <datasources>
@@ -398,6 +398,7 @@
         <subsystem xmlns="urn:jboss:domain:mail:1.0">
             <mail-session jndi-name="java:jboss/mail/Default">
                 <smtp-server outbound-socket-binding-ref="mail-smtp"/>
+                <!-- Note that there can be only one "smtp-server" per "mail-session". Comment out the default one. -->
                 <!--smtp-server ssl="true" outbound-socket-binding-ref="mail-gmail-smtp">
                     <login name="user@gmail.com" password="***"/>
                 </smtp-server-->
