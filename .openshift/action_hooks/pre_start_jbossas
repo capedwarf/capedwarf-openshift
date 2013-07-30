@@ -90,35 +90,18 @@ fi
 
 echo "Defining java opts..." >> $debug_log
 ### re defrine JAVA_OPTS the same way as JBossAS cartride does, because there is no way to just add to JAVA_OPTS
-resource_limits_file=`readlink -f /etc/openshift/resource_limits.conf`
-if [ "$resource_limits_file" = "/etc/openshift/resource_limits.conf" ]; 
-then
-	source /etc/openshift/resource_limits.conf
-else
-	resource_limits_file_name=`basename $resource_limits_file`
-	node_profile=`echo ${resource_limits_file_name/*./}`
-fi
+max_memory_bytes=$(oo-cgroup-read memory.limit_in_bytes)
+max_memory_mb=$(expr $max_memory_bytes / 1048576)
+jvm_heap_ratio=0.75
+jvm_perm_ratio=0.30
+max_heap=$( echo "$max_memory_mb * $jvm_heap_ratio" | bc | awk '{print int($1+0.5)}')
+max_perm=$( echo "$max_heap * $jvm_perm_ratio" | bc | awk '{print int($1+0.5)}')
 
-case "$node_profile" in
-    micro)
-        memory_options="-client -Xmx100m -XX:MaxPermSize=100m -XX:+AggressiveOpts -Dorg.apache.tomcat.util.LOW_MEMORY=true"
-    ;;
-    small)
-        memory_options="-client -Xmx256m -XX:MaxPermSize=128m -XX:+AggressiveOpts -Dorg.apache.tomcat.util.LOW_MEMORY=true"
-    ;;
-    medium)
-        memory_options="-client -Xmx664m -XX:MaxPermSize=128m -XX:+AggressiveOpts -Dorg.apache.tomcat.util.LOW_MEMORY=true"
-    ;;
-    large)
-        memory_options="-Xmx1456m -XX:MaxPermSize=148m -XX:+AggressiveOpts"
-    ;;
-    exlarge)
-        memory_options="-Xmx2888m -XX:MaxPermSize=184m -XX:+AggressiveOpts"
-    ;;
-    jumbo)
-        memory_options="-Xmx5888m -XX:MaxPermSize=256m -XX:+AggressiveOpts"
-    ;;
-esac
+if [ $max_memory_mb -lt 1024 ]; then
+  memory_options="-client -Xmx${max_heap}m -XX:MaxPermSize=${max_perm}m -XX:+AggressiveOpts -Dorg.apache.tomcat.util.LOW_MEMORY=true"
+else
+  memory_options="-Xmx${max_heap}m -XX:MaxPermSize=${max_perm}m -XX:+AggressiveOpts"
+fi
 
 JAVA_OPTS="$memory_options -Dorg.jboss.resolver.warning=true -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djboss.node.name=${OPENSHIFT_GEAR_DNS} -Djgroups.bind_addr=${OPENSHIFT_JBOSSAS_IP}"
 
